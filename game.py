@@ -17,7 +17,7 @@ from window import generate_initial_platforms
 def apply_gravity():
     """
     Applique la gravité au Doodle en augmentant progressivement sa vitesse verticale (vel_y).
-    Met à jour la position verticale (y) du Doodle.
+    Met à jour la position verticale (y) du Doodle. 
     """
     # TODO : Mettez à jour la vitesse verticale puis la position verticale
     # du Doodle à partir de GRAVITY.
