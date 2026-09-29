@@ -54,10 +54,10 @@ def move_doodle():
     # TODO : Implémentez le Screen Wrap pour qu'une partie du Doodle puisse
     # sortir d'un côté avant de réapparaître de l'autre.
     # N'utilisez pas de dimensions numériques écrites directement.
-    if doodle_dict["x"] + SCREEN_WIDTH<0:
-        doodle_dict["x"]=SCREEN_WIDTH
-    if doodle_dict["x"]> SCREEN_WIDTH:
-        doodle_dict["x"] =-SCREEN_WIDTH
+    if doodle_dict["x"] + DOODLE_WIDTH <= 0:
+        doodle_dict["x"] = SCREEN_WIDTH
+    elif doodle_dict["x"] >= SCREEN_WIDTH:
+        doodle_dict["x"] = -DOODLE_WIDTH
 
 
     return
