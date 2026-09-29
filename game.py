@@ -152,7 +152,20 @@ def scroll_camera():
     # Le score doit représenter la distance verticale ainsi parcourue et le
     # meilleur score doit être mis à jour. Les plateformes sorties sous
     # l'écran doivent être retirées, puis de nouvelles plateformes générées.
+    if doodle_dict["y"] < CAMERA_SCROLL_THRESHOLD:
+        decalage = CAMERA_SCROLL_THRESHOLD-doodle_dict["y"]
 
+        doodle_dict["y"] = CAMERA_SCROLL_THRESHOLD
+
+        for p in PLATFORMS:
+            p["y"]+=decalage
+    
+        doodle_dict["score"] += decalage
+        doodle_dict["high_score"] = max(doodle_dict["high_score"] , doodle_dict["score"] )
+
+        PLATFORMS[:] = [p for p in PLATFORMS if p["y"] < SCREEN_HEIGHT]
+
+        generate_new_platforms()
     return
 
 # ===========================================================
@@ -171,6 +184,19 @@ def generate_new_platforms():
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
 
+
+    if not PLATFORMS:          # si la liste est vide
+        plus_haut_y = SCREEN_HEIGHT
+    else:
+        plus_haut_y = min(p["y"] for p in PLATFORMS)
+
+    while plus_haut_y > 0:
+        nouveau_y = plus_haut_y - random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+        x = random.randint(0,SCREEN_WIDTH-PLATFORM_WIDTH)
+        type_plateforme = choose_platform_type(0.55,0.2,0.13)
+        nouvelle = create_platform(x, nouveau_y, type_plateforme)
+        PLATFORMS.append(nouvelle)
+        plus_haut_y = nouveau_y
     return
 
 # ===========================================================
