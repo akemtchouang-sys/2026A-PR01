@@ -21,6 +21,8 @@ def apply_gravity():
     """
     # TODO : Mettez à jour la vitesse verticale puis la position verticale
     # du Doodle à partir de GRAVITY.
+    doodle_dict["vel_y"]+=GRAVITY
+    doodle_dict["y"]+=doodle_dict["vel_y"]
 
     return
 
@@ -37,13 +39,25 @@ def move_doodle():
 
     # TODO : Gérez les déplacements gauche/droite et mettez à jour
     # simultanément la direction et l'image du Doodle.
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        doodle_dict["x"]-=DOODLE_SPEED
+        doodle_dict["direction"]="left"
+        doodle_dict["image"]=doodle_left_img
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        doodle_dict["x"]+=DOODLE_SPEED
+        doodle_dict["direction"]="right"
+        doodle_dict["image"]=doodle_right_img
+
 
 
 
     # TODO : Implémentez le Screen Wrap pour qu'une partie du Doodle puisse
     # sortir d'un côté avant de réapparaître de l'autre.
     # N'utilisez pas de dimensions numériques écrites directement.
-
+    if doodle_dict["x"] + SCREEN_WIDTH<0:
+        doodle_dict["x"]=SCREEN_WIDTH
+    if doodle_dict["x"]> SCREEN_WIDTH:
+        doodle_dict["x"] =-SCREEN_WIDTH
 
 
     return
@@ -60,7 +74,17 @@ def move_platforms():
     # TODO : Parcourez les plateformes et gérez le déplacement des plateformes
     # bleues encore actives. Elles doivent rester dans la fenêtre en inversant
     # leur vitesse lorsqu'elles atteignent un bord.
+    for p in PLATFORMS:
+       if p["type"] != "blue":
+          continue
+       if not p["active"]:
+          continue
+          p["x"]+= p["vx"]
+       if p["x"] <= 0:
+          p["vx"] = abs(p["vx"])
 
+       if p["x"] + p["width"] >=  SCREEN_WIDTH:
+          p["vx"] = -abs(p["vx"])
     return
 
 # ===========================================================
@@ -77,8 +101,11 @@ def check_platform_collisions():
     #
     # Contraintes :
     # - aucun rebond pendant la montée ;
+    if doodle_dict["vel_y"]<=0:
+        return
+    
     # - ignorer les plateformes inactives ;
-    # - utiliser rects_collide(...) pour le chevauchement des rectangles ;
+    # - utiliser rects_collide(...) pour le chevauchement des rectangles ; 
     # - un simple chevauchement ne suffit pas : le Doodle doit arriver par
     #   le dessus de la plateforme. Pour le vérifier, comparez la position
     #   actuelle de ses pieds à leur position approximative à l'image
@@ -86,6 +113,26 @@ def check_platform_collisions():
     # - spring : SPRING_JUMP_VELOCITY ;
     # - brown : JUMP_VELOCITY puis désactivation de la plateforme ;
     # - green/blue : JUMP_VELOCITY.
+
+    doodle_rect=(doodle_dict["x"], doodle_dict["y"], DOODLE_HEIGHT, DOODLE_WIDTH)
+    feet_y=doodle_dict["y"] + DOODLE_HEIGHT
+    previous_feet_y= feet_y - doodle_dict["vel_y"]
+    for p in PLATFORMS:
+            if not p["active"]:
+                continue
+            platform_rect = (p["x"], p["y"], p["width"], p["height"])    
+            if not rects_collide(platform_rect,doodle_rect):
+                continue
+            if previous_feet_y<= p["y"] + 14:
+                if p["type"]== "spring":
+                    doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
+                elif p["type"] == "brown":
+                    doodle_dict["vel_y"] = JUMP_VELOCITY
+                    p["active"] = False
+                else:
+                    doodle_dict["vel_y"] = JUMP_VELOCITY
+                break
+            return
 
     return
 
