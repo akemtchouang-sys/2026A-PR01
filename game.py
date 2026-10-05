@@ -112,25 +112,24 @@ def check_platform_collisions():
     # - brown : JUMP_VELOCITY puis désactivation de la plateforme ;
     # - green/blue : JUMP_VELOCITY.
 
-    doodle_rect=(doodle_dict["x"], doodle_dict["y"], DOODLE_HEIGHT, DOODLE_WIDTH)
-    feet_y=doodle_dict["y"] + DOODLE_HEIGHT
-    previous_feet_y= feet_y - doodle_dict["vel_y"]
+    doodle_rect = (doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT)
+    feet_y = doodle_dict["y"] + DOODLE_HEIGHT
+    previous_feet_y = feet_y - doodle_dict["vel_y"]
     for p in PLATFORMS:
-            if not p["active"]:
-                continue
-            platform_rect = (p["x"], p["y"], p["width"], p["height"])    
-            if not rects_collide(platform_rect,doodle_rect):
-                continue
-            if previous_feet_y<= p["y"] + 14:
-                if p["type"]== "spring":
-                    doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
-                elif p["type"] == "brown":
-                    doodle_dict["vel_y"] = JUMP_VELOCITY
-                    p["active"] = False
-                else:
-                    doodle_dict["vel_y"] = JUMP_VELOCITY
-                break
-            return
+        if not p["active"]:
+            continue
+        platform_rect = (p["x"], p["y"], p["width"], p["height"])
+        if not rects_collide(platform_rect, doodle_rect):
+            continue
+        if previous_feet_y <= p["y"] + 14:
+            if p["type"] == "spring":
+                doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
+            elif p["type"] == "brown":
+                doodle_dict["vel_y"] = JUMP_VELOCITY
+                p["active"] = False
+            else:
+                doodle_dict["vel_y"] = JUMP_VELOCITY
+            break
 
     return
 
